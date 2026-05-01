@@ -26,7 +26,7 @@ export default function LoginForm() {
     defaultValues: { email: "", password: "" },
   });
 
-  const onSubmit = async (data: LoginFormValues) => {
+  const onLoginSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
     try {
       console.log(data);
@@ -34,7 +34,7 @@ export default function LoginForm() {
   };
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={form.handleSubmit(onLoginSubmit)} className="space-y-4">
       {/* EMAIL */}
       <Controller
         name="email"

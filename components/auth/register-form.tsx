@@ -37,14 +37,14 @@ export default function RegisterForm() {
       confirmPassword: "",
     },
   });
-  const onSubmit = async (data: RegisterFormValues) => {
+  const onRegisterSubmit = async (data: RegisterFormValues) => {
     setIsLoading(true);
     try {
       console.log(data);
     } catch (error) {}
   };
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={form.handleSubmit(onRegisterSubmit)} className="space-y-4">
       {/* Name */}
       <Controller
         name="name"
