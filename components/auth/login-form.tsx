@@ -8,6 +8,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Field, FieldLabel, FieldError } from "@/components/ui/field";
 import { Button } from "../ui/button";
+import { toast } from "sonner";
+import { signIn } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 const loginSchema = z.object({
   email: z.string().email({ error: "please enter a valid email value" }),
@@ -19,6 +22,7 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginForm() {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<LoginFormValues>({
@@ -29,8 +33,24 @@ export default function LoginForm() {
   const onLoginSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
     try {
-      console.log(data);
-    } catch (error) {}
+      const { error } = await signIn.email({
+        email: data.email,
+        password: data.password,
+        rememberMe: true,
+      });
+      if (error) {
+        toast.error(
+          "Login failed. Please check your credentials and try again.",
+        );
+        return;
+      }
+      toast.success("Login successful! Redirecting...");
+      router.push("/");
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

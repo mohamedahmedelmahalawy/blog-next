@@ -3,8 +3,12 @@
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Button } from "../ui/button";
+import { useSession } from "@/lib/auth-client";
+import UserMenu from "../auth/user-menu";
+import { se } from "date-fns/locale";
 
 export default function Header() {
+  const { data: session, isPending } = useSession();
   const navItems = [
     { label: "Home", href: "/" },
     { label: "Create", href: "/post/create" },
@@ -34,9 +38,13 @@ export default function Header() {
           <div className="hidden md:block">{/* search placeholder */}</div>
           {/* placeholder for theme toggle */}
           <div className="flex items-center gap-2">
-            <Button variant={"default"} asChild>
-              <Link href={"auth"}>Login</Link>
-            </Button>
+            {isPending ? null : session?.user ? (
+              <UserMenu user={session.user} />
+            ) : (
+              <Button variant={"default"} asChild>
+                <Link href={"auth"}>Login</Link>
+              </Button>
+            )}
           </div>
         </div>
       </div>

@@ -9,6 +9,9 @@ import { Field, FieldError, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 
+import { signUp } from "@/lib/auth-client";
+import { toast } from "sonner";
+
 const registerSchema = z
   .object({
     name: z.string().min(3, { message: "Name must be 3 characters long." }),
@@ -26,7 +29,11 @@ const registerSchema = z
   });
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
-export default function RegisterForm() {
+
+interface RegisterFormProps {
+  onSuccess?: () => void;
+}
+export default function RegisterForm({ onSuccess }: RegisterFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -40,8 +47,28 @@ export default function RegisterForm() {
   const onRegisterSubmit = async (data: RegisterFormValues) => {
     setIsLoading(true);
     try {
-      console.log(data);
-    } catch (error) {}
+      const { error } = await signUp.email({
+        name: data.name,
+        email: data.email,
+        password: data.password,
+      });
+      if (error) {
+        toast.error(
+          "Registration failed to create an account. Please try again.",
+        );
+      }
+      console.log(error);
+      toast(
+        "Registration successful! Please check your email to verify your account.",
+      );
+      if (onSuccess) {
+        onSuccess();
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsLoading(false);
+    }
   };
   return (
     <form onSubmit={form.handleSubmit(onRegisterSubmit)} className="space-y-4">
@@ -88,6 +115,7 @@ export default function RegisterForm() {
             <FieldLabel htmlFor="password">Password</FieldLabel>
             <Input
               {...field}
+              type="password"
               id="password"
               placeholder="Enter your Password"
               aria-invalid={fieldState.invalid}
@@ -102,9 +130,10 @@ export default function RegisterForm() {
         control={form.control}
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
-            <FieldLabel htmlFor="confirmPassword">confirmPassword</FieldLabel>
+            <FieldLabel htmlFor="confirmPassword">Confirm Password</FieldLabel>
             <Input
               {...field}
+              type="password"
               id="confirmPassword"
               placeholder="Confirm your Password"
               aria-invalid={fieldState.invalid}
