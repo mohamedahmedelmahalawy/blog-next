@@ -9,6 +9,10 @@ import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { useTransition } from "react";
 
+import { createPostAction } from "@/actions/post-actions";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+
 const postSchema = z.object({
   title: z
     .string()
@@ -26,6 +30,7 @@ const postSchema = z.object({
 
 type PostFormValues = z.infer<typeof postSchema>;
 export default function PostForm() {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const form = useForm<PostFormValues>({
     resolver: zodResolver(postSchema),
@@ -36,7 +41,27 @@ export default function PostForm() {
     },
   });
   const onSubmitHandler = async (data: PostFormValues) => {
-    console.log(data);
+    startTransition(async () => {
+      try {
+        const formData = new FormData();
+        formData.append("title", data.title);
+        formData.append("description", data.description);
+        formData.append("content", data.content);
+
+        const res = await createPostAction(formData);
+        console.log(res, "res from action");
+
+        if (res.success) {
+          toast("Post created successfully");
+          router.refresh();
+          router.push("/");
+        } else {
+          toast.error(res.message || "Failed to create post");
+        }
+      } catch (e) {
+        toast.error("Failed to create post", e.message);
+      }
+    });
   };
   return (
     <form onSubmit={form.handleSubmit(onSubmitHandler)} className="space-y-6">
