@@ -13,3 +13,11 @@ export function slugify(text: string): string {
     .trim()
     .replace(/ +/g, "-");
 }
+
+export function formateDate(date: Date): string {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  }).format(date);
+}
