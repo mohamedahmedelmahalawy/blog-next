@@ -1,28 +1,9 @@
-// import { drizzle } from "drizzle-orm/node-postgres";
-// import { Pool } from "pg";
-// import * as schema from "./schema";
-
-// const pool = new Pool({
-//   connectionString: process.env.DATABASE_URL,
-//   ssl:
-//     process.env.NODE_ENV === "production"
-//       ? {
-//           rejectUnauthorized: false,
-//         }
-//       : false,
-//   max: 10,
-// });
-
-// export const db = drizzle(pool, { schema });
-
-// export async function getClient() {
-//   const client = await pool.connect();
-//   return client;
-// }
-
-import { drizzle } from "drizzle-orm/neon-http";
+import { drizzle } from "drizzle-orm/neon-serverless";
+import { Client } from "@neondatabase/serverless";
 import * as schema from "./schema";
 
-export const db = drizzle(process.env.DATABASE_URL!, {
-  schema,
+const client = new Client({
+  connectionString: process.env.DATABASE_URL,
 });
+
+export const db = drizzle(client, { schema });
