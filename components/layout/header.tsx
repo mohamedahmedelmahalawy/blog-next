@@ -43,7 +43,7 @@ export default function Header() {
               <UserMenu user={session.user} />
             ) : (
               <Button variant={"default"} asChild>
-                <Link href={"auth"}>Login</Link>
+                <Link href={"/auth"}>Login</Link>
               </Button>
             )}
           </div>

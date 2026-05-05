@@ -9,9 +9,10 @@ import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { useTransition } from "react";
 
-import { createPostAction } from "@/actions/post-actions";
+import { createPostAction, updatePostAction } from "@/actions/post-actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { is } from "drizzle-orm";
 
 const postSchema = z.object({
   title: z
@@ -28,17 +29,34 @@ const postSchema = z.object({
     .min(10, "Description must be at least 10 characters long"),
 });
 
+interface PostFormProps {
+  isEditing?: boolean;
+  post?: {
+    id: number;
+    title: string;
+    description: string;
+    content: string;
+    slug: string;
+  };
+}
 type PostFormValues = z.infer<typeof postSchema>;
-export default function PostForm() {
+export default function PostForm({ isEditing, post }: PostFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const form = useForm<PostFormValues>({
     resolver: zodResolver(postSchema),
-    defaultValues: {
-      title: "",
-      description: "",
-      content: "",
-    },
+    defaultValues:
+      isEditing && post
+        ? {
+            title: post.title,
+            description: post.description,
+            content: post.content,
+          }
+        : {
+            title: "",
+            description: "",
+            content: "",
+          },
   });
   const onSubmitHandler = async (data: PostFormValues) => {
     startTransition(async () => {
@@ -48,11 +66,19 @@ export default function PostForm() {
         formData.append("description", data.description);
         formData.append("content", data.content);
 
-        const res = await createPostAction(formData);
-        console.log(res, "res from action");
-
+        let res;
+        if (isEditing && post) {
+          res = await updatePostAction(post.id, formData);
+        } else {
+          res = await createPostAction(formData);
+          console.log(res, "res from action");
+        }
         if (res.success) {
-          toast("Post created successfully");
+          toast(
+            isEditing
+              ? "Post updated successfully"
+              : "Post created successfully",
+          );
           router.refresh();
           router.push("/");
         } else {
@@ -121,7 +147,11 @@ export default function PostForm() {
         )}
       />
       <Button className="mt-5 w-full" type="submit">
-        {isPending ? "Creating Post..." : "Create Post"}
+        {isPending
+          ? "Saving Post..."
+          : isEditing
+            ? "Update Post"
+            : "Create Post"}
       </Button>
     </form>
   );
