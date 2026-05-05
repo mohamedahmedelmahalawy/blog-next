@@ -29,7 +29,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} h-full`}
+      className={`${geistSans.variable} ${geistSans.className} ${geistMono.variable} h-full`}
     >
       <body className="min-h-full flex flex-col">
         <TooltipProvider>

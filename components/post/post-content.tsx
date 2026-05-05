@@ -25,7 +25,7 @@ export default function PostContent({ post, isAuthor }: PostContentProps) {
       </CardHeader>
       <CardContent>
         <p className="text-muted-foreground text-lg mb-6">{post.description}</p>
-        <p className="text-foreground text-4xl font-bold mb-6">
+        <p className="text-foreground text-2xl font-bold mb-6">
           {post.content}
         </p>
       </CardContent>
