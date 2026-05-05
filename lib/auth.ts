@@ -8,7 +8,7 @@ export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET || "BETTER_AUTH_SECRET",
   baseURL: process.env.BASE_URL,
   database: drizzleAdapter(db, {
-    provider: "postgresql",
+    provider: "pg",
     schema: {
       ...schema,
       user: schema.users,
