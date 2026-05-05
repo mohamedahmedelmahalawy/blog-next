@@ -23,7 +23,9 @@ export default function DeleteButtonPost({ postId }: DeletePostButtonProps) {
         toast.error(res.message);
       }
     } catch (e) {
-      toast.error("An error occurred while deleting the post");
+      toast.error("Failed to create post", {
+        description: e instanceof Error ? e.message : "Something went wrong",
+      });
     } finally {
       setIsDeleting(false);
     }

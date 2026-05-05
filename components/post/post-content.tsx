@@ -10,7 +10,7 @@ import {
 import { formateDate } from "@/lib/utils";
 
 import Link from "next/link";
-import { Delete, Pencil } from "lucide-react";
+import { Pencil } from "lucide-react";
 import { Button } from "../ui/button";
 import DeleteButtonPost from "./delete-button-post";
 
