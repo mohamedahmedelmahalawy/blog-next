@@ -12,7 +12,6 @@ import { useTransition } from "react";
 import { createPostAction, updatePostAction } from "@/actions/post-actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { is } from "drizzle-orm";
 
 const postSchema = z.object({
   title: z
@@ -85,7 +84,9 @@ export default function PostForm({ isEditing, post }: PostFormProps) {
           toast.error(res.message || "Failed to create post");
         }
       } catch (e) {
-        toast.error("Failed to create post", e.message);
+        toast.error("Failed to create post", {
+          description: e instanceof Error ? e.message : "Something went wrong",
+        });
       }
     });
   };
